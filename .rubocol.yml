@@ -20,6 +20,9 @@ Layout/AccessModifierIndentation:
 Layout/SpaceAroundMethodCallOperator:
   Enabled: true
 
+Layout/EmptyLinesAroundAttributeAccessor:
+  Enabled: true
+
 Lint/RaiseException:
   Enabled: false
 
@@ -85,6 +88,9 @@ Style/TrailingCommaInArrayLiteral:
 
 Style/TrailingCommaInHashLiteral:
   EnforcedStyleForMultiline: comma
+
+Style/SlicingWithRange:
+  Enabled: false
 
 ## Ignore some Metrics violations
 

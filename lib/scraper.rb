@@ -23,7 +23,6 @@ class Scraper
         comment_number = subtexts[i].css("a").last.children.text
         post_values[:comment_count] = comment_number == "discuss" ? 0 : only_number_regex.match(comment_number).to_s
         posts << post_values
-        i += 1
       end
       posts
     end
