@@ -26,5 +26,21 @@ class Scraper
       end
       posts
     end
+
+    def scrape_comments(comment_url)
+      html = Nokogiri::HTML(HTTParty.get(comment_url))
+      top_comments = []
+      comments = html.css(".athing.comtr").select do |comment|
+        comment.css(".ind img").last.attributes["width"].value == "0"
+      end
+      comments.each do |comment|
+        comment_hash = {}
+        comment_hash[:author] = comment.css(".hnuser").text
+        comment_hash[:age] = comment.css(".age").text
+        comment_hash[:body] = comment.css(".comment .c00").text
+        top_comments << comment_hash
+      end
+      top_comments
+    end
   end
 end
