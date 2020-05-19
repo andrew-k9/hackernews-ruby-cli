@@ -8,14 +8,15 @@
     @layer = 1
   end
 
+  # main loop for the program
   def call
     puts "Running application, type `help` for help"
     input = get_input
     until input == "quit"
-      input = if @layer == 1
-        layer_one_input(input)
+      if @layer == 1
+        input = layer_one_input(input)
       else
-        layer_two_input(input)
+        input = layer_two_input(input)
       end
     end
     binding.pry
@@ -49,6 +50,23 @@
   end
 
   def layer_two_input(input)
+    input_array = input.split(" ")
+    if input_array.length > 1
+      # go to and display comment data
+    else
+      number = /^(\d+)/.match(input).to_s
+      if number == ""
+        # not a number
+      else
+        n = number.to_i - 1
+        if n < @current_page.posts.length
+          puts @current_page.format_article_data(n)
+        else
+          puts "number too high: #{n + 1} is there when #{@current_page.posts.length} is max"
+        end
+      end
+    end
+    get_input
   end
 
 
@@ -60,11 +78,18 @@
     puts @current_page.format_page_data(0, 5)
   end
 
-  # returns user input line to indicate the layer
+  # get and format user input, change layer if needed
+  # return - user input line to indicate the layer
   def get_input
     @layer.times { print ">" }
     print " "
-    gets.chomp.downcase
+    input = gets.chomp.downcase
+    if input == "!" && @layer > 1
+      @layer -= 1
+      get_input
+    else
+      input
+    end
   end
 
   def help
@@ -77,7 +102,8 @@
     puts "  `n`          - view info on post n"
     puts "  `comments n` - open the comments of the post"
     puts "When in any layer"
-    puts "help - display this menu"
-    puts "quit - exit program"
+    puts "`help` - display this menu"
+    puts "`!`  - go to previous layer"
+    puts "`quit` - exit program"
   end
  end

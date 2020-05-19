@@ -4,7 +4,7 @@ class Scraper
   WEBSITE = "https://news.ycombinator.com".freeze
   class << self
     def scrape_posts(news_url)
-      html = Nokogiri::HTML(HTTParty.get(news_url))
+      html = Nokogiri::HTML(HTTParty.get(news_url).body)
       posts = []
       # `subtexts` is an array of all the gray text under the article links
       # they match up 1-1 with the number of `.athing`s, so the `i` var in
@@ -28,7 +28,7 @@ class Scraper
     end
 
     def scrape_comments(comment_url)
-      html = Nokogiri::HTML(HTTParty.get(comment_url))
+      html = Nokogiri::HTML(HTTParty.get(comment_url).body)
       top_comments = []
       comments = html.css(".athing.comtr").select do |comment|
         comment.css(".ind img").last.attributes["width"].value == "0"
