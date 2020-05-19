@@ -11,7 +11,7 @@ class Scraper
       # the w/ index block matches that article's  subtext
       subtexts = html.css(".subtext")
       only_number_regex = /^(\d+)/
-      html.css(".athing").each_with_index do  |post, i|
+      html.css(".athing").each_with_index do |post, i|
         post_values = {}
         post_values[:post_id] = post.attributes["id"].value
         post_values[:article_link] = post.css(".title a")[0].attributes["href"].value
@@ -24,7 +24,7 @@ class Scraper
         post_values[:comment_count] = comment_number == "discuss" ? 0 : only_number_regex.match(comment_number).to_s
         posts << post_values
       end
-      posts
+      { page_link: news_url, posts: posts }
     end
 
     def scrape_comments(comment_url)
@@ -40,7 +40,7 @@ class Scraper
         comment_hash[:body] = comment.css(".comment .c00").text
         top_comments << comment_hash
       end
-      top_comments
+      { page_link: comment_url, top_comments: top_comments }
     end
   end
 end
