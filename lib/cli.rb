@@ -4,6 +4,7 @@ class Cli
   attr_accessor :layer, :current_page, :current_comments
 
   WEBSITE = "https://news.ycombinator.com".freeze
+  PAGES = %w[news front ask show].freeze
 
   def initialize
     @layer = 1
@@ -17,64 +18,69 @@ class Cli
     until input == "quit"
       input = @layer == 1 ? layer_one_input(input) : layer_two_input(input)
     end
-    binding.pry
   end
 
-  # actions defined on the first layer of input, loads in articles or prints help message
+  # actions defined on the first layer of input,
+  # loads in articles or prints help message
   # @params - input: String
   # returns - user input to be used in the loop in `call`
   def layer_one_input(input)
-    case input
-    when "news"
-      sets_and_display_page("/news")
+    if PAGES.include?(input)
+      sets_and_display_page("/#{input}")
       @layer += 1
-    when "front"
-      sets_and_display_page("/front")
-      @layer += 1
-    when "ask"
-      sets_and_display_page("/ask")
-      @layer += 1
-    when "show"
-      sets_and_display_page("/show")
-      @layer += 1
-    when "quit"
-      return "quit"
-    when "help"
-      help
+    else
+      input = other_input(input)
+    end
+    input == "quit" ? input : format_input
+  end
+
+  # actions defined on the second layer of input, displays info about
+  # articles or comments
+  # @params - input: String
+  # returns - user input to be used in the loop in `call`
+  def layer_two_input(input)
+    if input.include?("comment")
+      display_comments(input.split(" ").last, input)
+    elsif number?(input)
+      display_single_article(input.to_i - 1)
+    else
+      input = other_input(input)
+    end
+    input == "quit" ? input : format_input
+  end
+
+  def display_single_article(number)
+    #     n = input.to_i - 1
+    if number < @current_page.posts.length
+      puts @current_page.format_article_data(number)
+    else
+      puts "number too high: #{n + 1} is there when
+        #{@current_page.posts.length} is max"
+    end
+  end
+
+  # display the comments for the article `number`
+  # @param - number: Int
+  def display_comments(number, input)
+    if number?(number)
+      display_comments_length_logic(number.to_i, @current_page.posts.length)
     else
       puts error_message(input)
     end
-    format_input
   end
 
-  def layer_two_input(input)
-    if input.include? "comment"
-      number = input.split(" ").last
-      if number?(number)
-        sets_and_display_comments(@current_page.posts[number.to_i - 1][:comment_link])
-      else
-        puts error_message(input)
-      end
+  # only here since rubocop was complaining
+  # @params - number: Int, bound: Int
+  def display_comments_length_logic(number, bound)
+    if number > bound
+      puts invalid_number_error(number, bound)
     else
-      if number?(input)
-        n = input.to_i - 1
-        if n < @current_page.posts.length
-          puts @current_page.format_article_data(n)
-        else
-          puts "number too high: #{n + 1} is there when #{@current_page.posts.length} is max"
-        end
-      else
-        puts error_message(input)
-      end
+      sets_and_display_comments(@current_page.posts[number - 1][:comment_link])
     end
-    format_input
   end
 
-  def number?(string)
-    /^(\d+)/.match(string).to_s != ""
-  end
-
-  # Prints the content of the comments in the highest points of the comment trees (if any)
+  # Prints the content of the comments in the highest points of the comment
+  # trees if any
   # @params - comment_url: String
   def sets_and_display_comments(comment_url)
     @current_comments = CommentsPage.new(Scraper.scrape_comments(comment_url))
@@ -85,44 +91,19 @@ class Cli
   # @params - route: String
   def sets_and_display_page(route)
     # 'news' should always be up to date!
-    unless !@current_page.nil? && @current_page.page_link == WEBSITE + route && route != "/news"
+    unless updateable?(route)
       @current_page = NewsPage.new(Scraper.scrape_posts(WEBSITE + route))
     end
     # for now, only 5 results
     puts @current_page.format_page_data(0, 5)
   end
 
-  # get and format user input, change layer if needed
-  # return - user input line to indicate the layer
-  def format_input
-    @layer.times { print ">" }
-    print " "
-    input = gets.chomp.downcase
-    if input == "!" && @layer > 1
-      @layer -= 1
-      format_input
-    else
-      input
-    end
-  end
-
-  # displays error message of the incorrect input value
-  # @params - input: String
-  # returns - formatted error message string
-  def error_message(input)
-    "Unknown command `#{input}`. Type `help` if help is needed"
-  end
-
-  # rubocop complained so I wrote this more... interestingly
-  def help
-    puts "When in > (layer 1)\n" + "  `news`  - go to new messages"
-    puts "  `front` - go to today's top posts"
-    puts "  `ask`   - got to the question board"
-    puts "  `show`  - go to the show section"
-    puts "When in >> (layer 2)"
-    puts "  `n`          - view info on post n"
-    puts "  `comments n` - open the comments of the post"
-    puts "When in any layer\n" + "`help` - display this menu"
-    puts "`!`  - go to previous layer\n" + "`quit` - exit program"
+  # another rubocop statement that needed to be extracted
+  # @params - route: String
+  # returns - bool if @current_page needs updating
+  def updateable?(route)
+    !@current_page.nil? &&
+      @current_page.page_link == WEBSITE + route &&
+      route != "/news"
   end
 end

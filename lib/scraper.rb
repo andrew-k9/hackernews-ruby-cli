@@ -34,13 +34,17 @@ class Scraper
         comment.css(".ind img").last.attributes["width"].value == "0"
       end
       comments.each do |comment|
-        comment_hash = {}
-        comment_hash[:author] = comment.css(".hnuser").text
-        comment_hash[:age] = comment.css(".age").text
-        comment_hash[:body] = comment.css(".comment .c00").text
-        top_comments << comment_hash
+        top_comments << scrape_comments_helper(comment)
       end
       { page_link: comment_url, top_comments: top_comments }
+    end
+
+    def scrape_comments_helper(comment)
+      comment_hash = {}
+      comment_hash[:author] = comment.css(".hnuser").text
+      comment_hash[:age] = comment.css(".age").text
+      comment_hash[:body] = comment.css(".comment .c00").text
+      comment_hash
     end
   end
 end
