@@ -1,7 +1,7 @@
  # Agnostic of nokogiri
  # Invokes the `Scraper` class
  class Cli
-  attr_accessor :layer
+  attr_accessor :layer, :current_page
   WEBSITE = "https://news.ycombinator.com".freeze
 
   def initialize
@@ -11,7 +11,7 @@
   def call
     puts "Running application, type `help` for help"
     input = get_input
-    until input == "exit"
+    until input == "quit"
       input = if @layer == 1
         layer_one_input(input)
       else
@@ -38,8 +38,8 @@
     when "show"
       print_page("/show")
       @layer += 1
-    when "exit"
-      return "exit"
+    when "quit"
+      return "quit"
     when "help"
       help
     else
@@ -48,16 +48,16 @@
     get_input
   end
 
-  # Prints the content of a page in order
+  def layer_two_input(input)
+  end
+
+
+  # Prints the content of a page in order, sets the `@current_page`
   # @params - route: String
   def print_page(route)
-    page = Scraper.scrape_posts(WEBSITE + route)
+    @current_page = NewsPage.new(Scraper.scrape_posts(WEBSITE + route))
     # for now, only 5 results
-    page[:posts][0..5].each_with_index do |post, i|
-      puts "#{i + 1}: #{post[:title]}"
-      puts "#{post[:comment_count] == 0 ? "None" : post[:comment_count]} coment(s)"
-      puts "--------------------------------------------------------" if i == page[:posts].length - 1
-    end
+    puts @current_page.format_page_data(0, 5)
   end
 
   # returns user input line to indicate the layer
@@ -74,7 +74,7 @@
     puts "  `ask`   - got to the question board"
     puts "  `show`  - go to the show section"
     puts "When in >> (layer 2)"
-    puts "  `n`      - view info on post n"
+    puts "  `n`          - view info on post n"
     puts "  `comments n` - open the comments of the post"
     puts "When in any layer"
     puts "help - display this menu"
