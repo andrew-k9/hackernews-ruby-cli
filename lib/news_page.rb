@@ -1,5 +1,4 @@
 # Blueprint for the webpage
-# Store all page instances
 class NewsPage
   attr_accessor :page_link, :posts
 
@@ -12,7 +11,6 @@ class NewsPage
   # @params - start: Int, stop: Int
   # returns a formatted array for screen output
   def format_page_data(start, stop)
-    len = @posts.length
     @posts[start..stop].each_with_index.map do |post, i|
       "#{i + 1}: #{post[:title]}\n" +
       "  #{post[:comment_count] == 0 ? "None" : post[:comment_count]} coment(s)\n"
@@ -25,7 +23,7 @@ class NewsPage
   def format_article_data(index)
     str = ""
     post = posts[index]
-    top_level = /.+\.com|.+\.gov|.+\.org|.+\.edu|.+\.io/
+    top_level = /.+\.com|.+\.net|.+\.gov|.+\.org|.+\.edu|.+\.io/
     http_split = /\/\/|www\./
     domain = top_level.match(post[:article_link].split(http_split).last)
     str += "#{post[:title]} (#{domain})\n"
