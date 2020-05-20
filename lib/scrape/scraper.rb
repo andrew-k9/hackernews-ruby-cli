@@ -27,24 +27,25 @@ class Scraper
     def scrape_comments(comment_url)
       html = Nokogiri::HTML(HTTParty.get(comment_url).body)
       top_comments = []
+      # selects all top-level comments that we're interested in
       comments = html.css(".athing.comtr").select do |comment|
         comment.css(".ind img").last.attributes["width"].value == "0"
       end
       comments.each do |comment|
         top_comments << scrape_comments_helper(comment)
       end
-      { page_link: comment_url, top_comments: top_comments }
+      CommentsPage.new(page_link: comment_url, top_comments: top_comments)
     end
 
   # Private methods for helpers to the corresponding methods
   private
 
     def scrape_comments_helper(comment)
-      comment_hash = {}
-      comment_hash[:author] = comment.css(".hnuser").text
-      comment_hash[:age] = comment.css(".age").text
-      comment_hash[:body] = comment.css(".comment .c00").text
-      comment_hash
+      Comment.new(
+        author: comment.css(".hnuser").text,
+        age: comment.css(".age").text,
+        body: comment.css(".comment .c00").text
+      )
     end
 
     def scrape_posts_helper(post)

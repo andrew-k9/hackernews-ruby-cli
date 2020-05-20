@@ -26,7 +26,9 @@ class Cli
   # returns - user input to be used in the loop in `call`
   def layer_one_input(input)
     if PAGES.include?(input)
-      sets_and_display_page("/#{input}")
+      update_current_page("/#{input}")
+      # for now, only 5 results
+      puts @current_page.format_page_data(0, 5)
       @layer += 1
     else
       input = other_input(input)
@@ -39,63 +41,45 @@ class Cli
   # @params - input: String
   # returns - user input to be used in the loop in `call`
   def layer_two_input(input)
-    if input.include?("comment")
-      display_comments(input.split(" ").last, input)
+    if validate?(input)
+      display_comments_of_post(input.split(" ").last.to_i - 1)
     elsif number?(input)
-      display_single_article(input.to_i - 1)
+      puts @current_page.format_article(input.to_i - 1)
     else
       input = other_input(input)
     end
     input == "quit" ? input : format_input
   end
 
-  # displays one article from a list of articles
-  # @params - number: Int
-  def display_single_article(number)
-    if number < @current_page.posts.length
-      puts @current_page.format_article_data(number)
+  # puts the formatted comments
+  def display_comments_of_post(post_index)
+    post = @current_page.posts[post_index]
+    if post.nil?
+      puts invalid_number_error(post_index, @current_page.posts.length)
     else
-      puts "number too high: #{n + 1} is there when
-        #{@current_page.posts.length} is max"
+      update_current_comments(post.comment_link)
+      puts @current_comments.format_all
     end
   end
 
-  # display the comments for the article `number`
-  # @param - number: Int
-  def display_comments(number, input)
-    if number?(number)
-      display_comments_length_logic(number.to_i, @current_page.posts.length)
-    else
-      puts error_message(input)
-    end
-  end
-
-  # only here since rubocop was complaining
-  # @params - number: Int, bound: Int
-  def display_comments_length_logic(number, bound)
-    if number > bound
-      puts invalid_number_error(number, bound)
-    else
-      sets_and_display_comments(@current_page.posts[number - 1][:comment_link])
-    end
+  # one off to check if the input includes comment and the number is positive
+  def validate?(input)
+    number = input.split(" ").last.to_i
+    input.include?("comment") && number.positive?
   end
 
   # Prints the content of the comments in the highest points of the comment
   # trees if any
   # @params - comment_url: String
-  def sets_and_display_comments(comment_url)
-    @current_comments = CommentsPage.new(Scraper.scrape_comments(comment_url))
-    puts @current_comments.format_comment_page_data(0, 5)
+  def update_current_comments(comment_url)
+    @current_comments = Scraper.scrape_comments(comment_url)
   end
 
   # Prints the content of a page in order, sets the `@current_page`
   # @params - route: String
-  def sets_and_display_page(route)
-    # 'news' should always be up to date!
-    unless !@current_page.nil? && @current_page.updateable?(route)
-      @current_page = Scraper.scrape_posts(WEBSITE + route)
-    end
-    # for now, only 5 results
-    puts @current_page.format_page_data(0, 5)
+  def update_current_page(route)
+    return if !@current_page.nil? && @current_page.updateable?(route)
+
+    @current_page = Scraper.scrape_posts(WEBSITE + route)
   end
 end

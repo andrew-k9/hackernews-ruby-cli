@@ -25,7 +25,6 @@ class Article
     http_split = %r{\/\/|www\.}
     domain = top_level.match(@article_link.split(http_split).last)
     "#{@title} (#{domain})\n by #{@post_author} | points: #{
-      @points} | comments:#{@comment_count}\n  Link: #{
-      @article_link[0..50]}#{'...' if @article_link.length > 50}"
+      @points} | comments:#{@comment_count}\n Link: #{@article_link}"
   end
 end
