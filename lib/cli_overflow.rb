@@ -20,6 +20,9 @@ class Cli
     "Unknown command `#{input}` in layer #{@layer}. Type `help` if stuck"
   end
 
+  # string for error message for incorrect input
+  # @params - number: Int, bound: Int
+  # returns - formatted error message string
   def invalid_number_error(number, bound)
     "number too high: #{number + 1} is there when #{bound} is max"
   end

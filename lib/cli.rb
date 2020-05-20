@@ -49,8 +49,9 @@ class Cli
     input == "quit" ? input : format_input
   end
 
+  # displays one article from a list of articles
+  # @params - number: Int
   def display_single_article(number)
-    #     n = input.to_i - 1
     if number < @current_page.posts.length
       puts @current_page.format_article_data(number)
     else

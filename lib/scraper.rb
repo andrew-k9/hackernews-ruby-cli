@@ -3,6 +3,10 @@
 class Scraper
   WEBSITE = "https://news.ycombinator.com".freeze
   class << self
+
+    # scrape website for aricles on a given page
+    # @params - news_url: String
+    # returns hash of formatted posts
     def scrape_posts(news_url)
       html = Nokogiri::HTML(HTTParty.get(news_url).body)
       posts = []
@@ -19,6 +23,9 @@ class Scraper
       { page_link: news_url, posts: posts }
     end
 
+    # scrape website for aricles on a given page
+    # @params - news_url: String
+    # returns hash of formatted posts
     def scrape_comments(comment_url)
       html = Nokogiri::HTML(HTTParty.get(comment_url).body)
       top_comments = []
@@ -30,6 +37,9 @@ class Scraper
       end
       { page_link: comment_url, top_comments: top_comments }
     end
+
+  # Private methods for helpers to the corresponding methods
+  private
 
     def scrape_comments_helper(comment)
       comment_hash = {}
@@ -44,7 +54,6 @@ class Scraper
     #   age: comment.css(".age").text,
     #   body: comment.css(".comment .c00").text
     # )
-
     def scrape_posts_helper(post, post_values)
       post_values[:post_id] = post.attributes["id"].value
       post_values[:article_link] =
