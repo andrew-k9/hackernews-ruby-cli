@@ -92,19 +92,10 @@ class Cli
   # @params - route: String
   def sets_and_display_page(route)
     # 'news' should always be up to date!
-    unless updateable?(route)
-      @current_page = NewsPage.new(Scraper.scrape_posts(WEBSITE + route))
+    unless !@current_page.nil? && @current_page.updateable?(route)
+      @current_page = Scraper.scrape_posts(WEBSITE + route)
     end
     # for now, only 5 results
     puts @current_page.format_page_data(0, 5)
-  end
-
-  # another rubocop statement that needed to be extracted
-  # @params - route: String
-  # returns - bool if @current_page needs updating
-  def updateable?(route)
-    !@current_page.nil? &&
-      @current_page.page_link == WEBSITE + route &&
-      route != "/news"
   end
 end

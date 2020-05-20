@@ -3,7 +3,6 @@
 class Scraper
   WEBSITE = "https://news.ycombinator.com".freeze
   class << self
-
     # scrape website for aricles on a given page
     # @params - news_url: String
     # returns hash of formatted posts
@@ -13,14 +12,13 @@ class Scraper
       # `subtexts` is an array of all the gray text under the article links
       # they match up 1-1 with the number of `.athing`s, so the `i` var in
       # the w/ index block matches that article's  subtext
-
       subtexts = html.css(".subtext")
       html.css(".athing").each_with_index do |post, i|
-        post_values = scrape_posts_helper(post, {})
-        post_values = scrape_posts_helper_subtexts(subtexts[i], post_values)
+        post_values = scrape_posts_helper(post)
+        scrape_posts_helper_subtexts(post_values, subtexts[i])
         posts << post_values
       end
-      { page_link: news_url, posts: posts }
+      NewsPage.new(page_link: news_url, posts: posts)
     end
 
     # scrape website for aricles on a given page
@@ -49,29 +47,25 @@ class Scraper
       comment_hash
     end
 
-    # Comment.new(
-    #   author: comment.css(".hnuser").text,
-    #   age: comment.css(".age").text,
-    #   body: comment.css(".comment .c00").text
-    # )
-    def scrape_posts_helper(post, post_values)
-      post_values[:post_id] = post.attributes["id"].value
-      post_values[:article_link] =
-        post.css(".title a")[0].attributes["href"].value
-      post_values[:title] = post.css(".storylink").text
-      post_values[:comment_link] = WEBSITE + "/item?id=#{post_values[:post_id]}"
-      post_values
+    def scrape_posts_helper(post)
+      post_id = post.attributes["id"].value
+      Article.new(
+        post_id: post_id,
+        article_link: post.css(".title a")[0].attributes["href"].value,
+        title: post.css(".storylink").text,
+        comment_link: WEBSITE + "/item?id=#{post_id}"
+      )
     end
 
-    def scrape_posts_helper_subtexts(subtext, post_values)
+    def scrape_posts_helper_subtexts(post_values, subtext)
       only_number = /^(\d+)/
-      post_values[:post_author] = subtext.css(".hnuser").text
-      comment_number = subtext.css("a").last.children.text
-      post_values[:points] =
-        only_number.match(subtext.css(".score").text).to_s
-      post_values[:comment_count] =
-        comment_number == "discuss" ? 0 : only_number.match(comment_number).to_s
-      post_values
+      number = subtext.css("a").last.children.text
+      count = number == "discuss" ? 0 : only_number.match(number).to_s
+      post_values.add_subtext(
+        post_author: subtext.css(".hnuser").text,
+        points: only_number.match(subtext.css(".score").text).to_s,
+        comment_count: count
+      )
     end
   end
 end
