@@ -72,7 +72,7 @@ class Cli
   # trees if any
   # @params - comment_url: String
   def update_current_comments(comment_url)
-    @current_comments = Scraper.scrape_comments(comment_url)
+    @current_comments = CommentScraper.scrape_comments(comment_url)
   end
 
   # Prints the content of a page in order, sets the `@current_page`
@@ -80,6 +80,6 @@ class Cli
   def update_current_page(route)
     return if !@current_page.nil? && @current_page.updateable?(route)
 
-    @current_page = Scraper.scrape_posts(WEBSITE + route)
+    @current_page = ArticleScraper.scrape_posts(WEBSITE + route)
   end
 end

@@ -19,6 +19,8 @@ class CommentsPage
   end
 
   def format_all
+    return "No comments!" if @top_comments.empty?
+
     @top_comments.map(&:format)
   end
 end
