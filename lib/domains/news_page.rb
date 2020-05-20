@@ -2,8 +2,6 @@
 class NewsPage
   attr_accessor :page_link, :posts
 
-  WEBSITE = "https://news.ycombinator.com".freeze
-
   def initialize(page_link:, posts:)
     @posts = posts
     @page_link = page_link
@@ -29,8 +27,9 @@ class NewsPage
     end
   end
 
+  # a page is updateable if the route isn't news and it isn't the current page
   def updateable?(route)
-    @page_link == WEBSITE + route && route != "/news"
+    @page_link.split(".com").last == route
   end
 
   def valid_post?(index)

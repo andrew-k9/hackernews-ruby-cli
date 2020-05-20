@@ -1,7 +1,6 @@
 # Scrapes the webpage using nokogiri
 # Don't output to the user
 class CommentScraper
-  WEBSITE = "https://news.ycombinator.com".freeze
   class << self
     # scrape website for aricles on a given page
     # @params - news_url: String

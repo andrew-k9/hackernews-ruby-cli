@@ -16,10 +16,12 @@ class Article
     @comment_count = comment_count
   end
 
+  # returns a single article in short form
   def short_article_info
     "#{@title}\n  comments: #{@comment_count}"
   end
 
+  # returns all info on a single article
   def long_article_info
     top_level = /.+\.com|.+\.net|.+\.gov|.+\.org|.+\.edu|.+\.io/
     http_split = %r{\/\/|www\.}

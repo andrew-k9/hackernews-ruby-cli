@@ -4,7 +4,8 @@ class ArticleScraper
     # scrape website for aricles on a given page
     # @params - news_url: String
     # returns hash of formatted posts
-    def scrape_posts(news_url)
+    def scrape_posts(news_route)
+      news_url = WEBSITE + news_route
       html = Nokogiri::HTML(HTTParty.get(news_url).body)
       posts = []
       # `subtexts` is an array of all the gray text under the article links
@@ -19,6 +20,7 @@ class ArticleScraper
       NewsPage.new(page_link: news_url, posts: posts)
     end
 
+  # helper methods to initialize the Article object
   private
 
     def scrape_posts_helper(post)

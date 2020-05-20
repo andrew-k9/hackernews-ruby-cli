@@ -3,8 +3,7 @@
 class Cli
   attr_accessor :layer, :current_page, :current_comments
 
-  WEBSITE = "https://news.ycombinator.com".freeze
-  PAGES = %w[news front ask show].freeze
+  PAGES = %w[newest front ask show].freeze
 
   def initialize
     @layer = 1
@@ -17,6 +16,20 @@ class Cli
     input = format_input
     until input == "quit"
       input = @layer == 1 ? layer_one_input(input) : layer_two_input(input)
+    end
+  end
+
+  # get and format user input, change layer if needed
+  # return - user input line to indicate the layer
+  def format_input
+    @layer.times { print ">" }
+    print " "
+    input = gets.chomp.downcase
+    if input == "!" && @layer > 1
+      @layer -= 1
+      format_input
+    else
+      input
     end
   end
 
@@ -42,7 +55,8 @@ class Cli
   # returns - user input to be used in the loop in `call`
   def layer_two_input(input)
     if validate?(input)
-      display_comments_of_post(input.split(" ").last.to_i - 1)
+      index = input.split(" ").last.to_i - 1
+      display_comments_of_post(index)
     elsif number?(input)
       puts @current_page.format_article(input.to_i - 1)
     else
@@ -51,7 +65,24 @@ class Cli
     input == "quit" ? input : format_input
   end
 
-  # puts the formatted comments
+  # deals with input for all layers and bad input
+  # @params - input: String
+  # returns what was parsed
+  def other_input(input)
+    case input
+    when "quit"
+      "quit"
+    when "help"
+      help
+      "help"
+    else
+      puts error_message(input)
+      "error"
+    end
+  end
+
+  # puts the formatted comments for a given post
+  # @params - post_index: Int
   def display_comments_of_post(post_index)
     post = @current_page.posts[post_index]
     if post.nil?
@@ -80,6 +111,6 @@ class Cli
   def update_current_page(route)
     return if !@current_page.nil? && @current_page.updateable?(route)
 
-    @current_page = ArticleScraper.scrape_posts(WEBSITE + route)
+    @current_page = ArticleScraper.scrape_posts(route)
   end
 end

@@ -10,6 +10,7 @@ class Comment
     @body = body
   end
 
+  # formats a single comment
   def format
     "#{@author} says:\n#{@body[0..COMMENT_MAX]}#{
       '...' if @body.length > COMMENT_MAX}\n#{BREAKER}"
