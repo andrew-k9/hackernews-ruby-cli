@@ -24,6 +24,14 @@ class Colerizer
       puts color_words_from_indicies(string, word_indicies_to_colorize)
     end
 
+    def link_style(string)
+      Rainbow(string).italic
+    end
+
+    def author_style(string)
+      Rainbow(string).italic
+    end
+
   private
 
     def color_words_from_indicies(string, index_array)

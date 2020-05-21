@@ -13,7 +13,8 @@ class Comment
 
   # formats a single comment
   def format
-    "#{@author} says:\n#{@body[0..COMMENT_MAX]}#{
+    author = Colerizer.author_style(@author)
+    "#{author} says:\n#{@body[0..COMMENT_MAX]}#{
       '...' if @body.length > COMMENT_MAX}\n#{BREAKER}"
   end
 end
