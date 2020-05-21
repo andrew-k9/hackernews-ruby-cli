@@ -27,9 +27,9 @@ class ArticleScraper
       post_id = post.attributes["id"].value
       Article.new(
         post_id: post_id,
-        article_link: post.css(".title a")[0].attributes["href"].value,
+        external_link: post.css(".title a")[0].attributes["href"].value,
         title: post.css(".storylink").text,
-        comment_link: WEBSITE + "/item?id=#{post_id}"
+        comments_link: WEBSITE + "/item?id=#{post_id}"
       )
     end
 

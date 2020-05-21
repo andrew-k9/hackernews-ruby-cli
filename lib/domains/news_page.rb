@@ -21,15 +21,17 @@ class NewsPage
   # returns a formatted string for screen output
   def format_article(index)
     if index > @posts.length
-      "number too high: #{index + 1} is there when #{bound} is max"
+      IoManager.invalid_number_error_string(index, @posts.length)
     else
       @posts[index].long_article_info
     end
   end
 
   # a page is updateable if the route isn't news and it isn't the current page
-  def updateable?(route)
-    @page_link.split(".com").last == route
+  def updateable?(new_route)
+    bad_routes %w[jobs comments]
+    route = @page_link.split(".com").last
+    route == new_route && !bad_routes.include?(new_route)
   end
 
   def valid_post?(index)

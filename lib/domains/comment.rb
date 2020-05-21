@@ -1,4 +1,5 @@
 class Comment
+  # TODO: rename all instances of Comment to "top comments"
   attr_reader :author, :age, :body
 
   COMMENT_MAX = 250

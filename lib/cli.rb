@@ -12,25 +12,21 @@ class Cli
   # main loop for the program
   def call
     # TODO: Add in more instructions about what each layer does
-    puts "Running application, type `help` for help"
+    IoManager.greeting
     input = format_input
     until input == "quit"
       input = @layer == 1 ? layer_one_input(input) : layer_two_input(input)
     end
   end
 
+private
+
   # get and format user input, change layer if needed
   # return - user input line to indicate the layer
   def format_input
-    @layer.times { print ">" }
-    print " "
-    input = gets.chomp.downcase
-    if input == "!" && @layer > 1
-      @layer -= 1
-      format_input
-    else
-      input
-    end
+    hash = IoManager.parse_layer_input(@layer)
+    @layer = hash[:layer]
+    hash[:input]
   end
 
   # actions defined on the first layer of input,
@@ -41,10 +37,10 @@ class Cli
     if PAGES.include?(input)
       update_current_page("/#{input}")
       # for now, only 5 results
-      puts @current_page.format_page_data(0, 5)
+      IoManager.print_array_data(@current_page.format_page_data(0, 5))
       @layer += 1
     else
-      input = other_input(input)
+      input = IoManager.global_input_layer(input, layer)
     end
     input == "quit" ? input : format_input
   end
@@ -60,25 +56,9 @@ class Cli
     elsif number?(input)
       puts @current_page.format_article(input.to_i - 1)
     else
-      input = other_input(input)
+      input = IoManager.global_input_layer(input, layer)
     end
     input == "quit" ? input : format_input
-  end
-
-  # deals with input for all layers and bad input
-  # @params - input: String
-  # returns what was parsed
-  def other_input(input)
-    case input
-    when "quit"
-      "quit"
-    when "help"
-      help
-      "help"
-    else
-      puts error_message(input)
-      "error"
-    end
   end
 
   # puts the formatted comments for a given post
@@ -86,10 +66,10 @@ class Cli
   def display_comments_of_post(post_index)
     post = @current_page.posts[post_index]
     if post.nil?
-      puts invalid_number_error(post_index, @current_page.posts.length)
+      IoManager.invalid_number_error(post_index, @current_page.posts.length)
     else
-      update_current_comments(post.comment_link)
-      puts @current_comments.format_all
+      update_current_comments(post.comments_link)
+      IoManager.print_array_data(@current_comments.format_all)
     end
   end
 
@@ -112,5 +92,9 @@ class Cli
     return if !@current_page.nil? && @current_page.updateable?(route)
 
     @current_page = ArticleScraper.scrape_posts(route)
+  end
+
+  def number?(string)
+    /^(\d+)/.match(string).to_s != ""
   end
 end
