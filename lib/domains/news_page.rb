@@ -29,7 +29,7 @@ class NewsPage
 
   # a page is updateable if the route isn't news and it isn't the current page
   def updateable?(new_route)
-    bad_routes %w[jobs comments]
+    bad_routes = %w[jobs comments]
     route = @page_link.split(".com").last
     route == new_route && !bad_routes.include?(new_route)
   end

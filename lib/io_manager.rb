@@ -36,12 +36,18 @@ class IoManager
       puts "`!`  - go to previous layer\n" + "`quit` - exit program"
     end
 
-    def print_array_data(array)
+    def print_article_array(array)
+      array.each do |element|
+        Colerizer.print_color_for_language_topic_framework(element)
+      end
+    end
+
+    def print_comment_array(array)
       puts array
     end
 
     def print_single_article(article_string)
-      puts article_string
+      Colerizer.print_color_for_language_topic_framework(article_string)
     end
 
     # deals with input for all layers and bad input
