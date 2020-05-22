@@ -2,6 +2,7 @@ require "io/console"
 
 class IoManager
   class << self
+    BREAKER = "------------------------------------------".freeze
     # works with Cli class to get input and change layers
     # @params- layer: Int
     def parse_layer_input(layer)
@@ -36,23 +37,35 @@ class IoManager
       puts "  `comments n` - open the comments of the post"
       puts "When in any layer\n" + "`help` - display this menu"
       puts "`!`  - go to previous layer\n" + "`quit` - exit program"
+      puts ""
     end
 
     def print_article_array(array)
+      puts BREAKER
       array.each do |element|
         Colerizer.print_color_for_language_topic_framework(element)
+        puts ""
       end
+      puts BREAKER
     end
 
     def print_comment_array(array)
       columns = IO.console.winsize[1] * 3 / 4
+      if array[0] == "No comments!"
+        puts array[0] + "\n"
+        return
+      end
       array.each do |comment|
         puts format_string_for_window_size(comment, columns)
+        puts ""
       end
+      puts BREAKER
     end
 
     def print_single_article(article_string)
+      puts "\n" + BREAKER
       Colerizer.print_color_for_language_topic_framework(article_string)
+      puts BREAKER + "\n\n"
     end
 
     # deals with input for all layers and bad input

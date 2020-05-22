@@ -21,7 +21,7 @@ class CommentsPage
   # formats all comments on a given page
   # returns - string if no comments found or collection of formatted strings
   def format_all
-    return "No comments!" if @top_comments.empty?
+    return ["No comments!"] if @top_comments.empty?
 
     @top_comments.map(&:format)
   end
