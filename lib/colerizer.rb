@@ -1,6 +1,7 @@
 require_relative "../db/domain_color_index.rb"
 class Colerizer
   class << self
+    # TODO: move out constants
     LANGUAGES = ["ruby", "javascript", "js", "java script", "typescript",
                  "swift", "python", "rust", "c", "c++", "c#", "java",
                  "haskell"].freeze

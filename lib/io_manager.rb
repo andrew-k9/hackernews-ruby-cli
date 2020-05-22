@@ -1,5 +1,6 @@
 require "io/console"
 
+# TODO: more linebreaks!
 class IoManager
   class << self
     # works with Cli class to get input and change layers
@@ -46,6 +47,10 @@ class IoManager
 
     def print_comment_array(array)
       columns = IO.console.winsize[1] * 3 / 4
+      if array[0] == "No comments!"
+        puts array[0]
+        return
+      end
       array.each do |comment|
         puts format_string_for_window_size(comment, columns)
       end
