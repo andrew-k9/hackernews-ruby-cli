@@ -35,8 +35,7 @@ private
   def layer_one_input(input)
     if PAGES.include?(input)
       update_current_page("/#{input}")
-      # for now, only 5 results
-      IoManager.print_article_array(@current_page.format_page_data(0, 5))
+      IoManager.print_article_array(@current_page.format_page_data(0, 10))
       @layer += 1
     else
       input = IoManager.global_input_layer(input, layer)
@@ -52,13 +51,17 @@ private
     if validate?(input)
       index = input.split(" ").last.to_i - 1
       display_comments_of_post(index)
-    elsif number?(input)
+    elsif number_and_less_than_12?(input)
       IoManager
         .print_single_article(@current_page.format_article(input.to_i - 1))
     else
       input = IoManager.global_input_layer(input, layer)
     end
     input == "quit" ? input : format_input
+  end
+
+  def number_and_less_than_12?(input)
+    number?(input) && input.to_i < 12
   end
 
   # puts the formatted comments for a given post
@@ -76,7 +79,7 @@ private
   # one off to check if the input includes comment and the number is positive
   def validate?(input)
     number = input.split(" ").last.to_i
-    input.include?("comment") && number.positive?
+    input.include?("comment") && number.positive? && number < 12
   end
 
   # Prints the content of the comments in the highest points of the comment

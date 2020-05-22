@@ -1,19 +1,11 @@
 require_relative "../db/domain_color_index.rb"
+require_relative "../db/languages.rb"
+require_relative "../db/topics.rb"
+require_relative "../db/frameworks.rb"
+require_relative "../db/alias.rb"
+
 class Colerizer
   class << self
-    # TODO: move out constants
-    LANGUAGES = ["ruby", "javascript", "js", "java script", "typescript",
-                 "swift", "python", "rust", "c", "c++", "c#", "java",
-                 "haskell"].freeze
-    TOPICS = %w[security math algorithms linux].freeze
-    FRAMEWORKS = ["rails", "react", "react native", "unity"].freeze
-    ALIAS = {
-      javascript: %w[js javascript],
-      react_native: ["rn"],
-      cpp: ["c++"],
-      cs: ["c#"],
-    }.freeze
-
     def print_color_for_language_topic_framework(string)
       word_indicies_to_colorize = []
       string.downcase.split(" ").each_with_index do |word, i|
