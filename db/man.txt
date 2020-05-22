@@ -13,7 +13,7 @@ the Hacker News website
 
 NAME
 
-    hnconsole, get the front page now!
+    hnconsole, get HackerNews front page now!
 
 SYNOPSIS
 
@@ -22,18 +22,18 @@ SYNOPSIS
 DESCRIPTION
 
     The application runs in a loop until the user inputs `quit`.
-    It operates in a layer system, so layer one is shown by `>` and layer
-    two is `>`.
+    It operates in a layer system. Layer one is shown by `>` and layer
+    two is `>>`.
 
     - Layer one allows searching the various pages on the site including:
 
       newest | front | ask | show
 
-      by typing in the above words. For example if I type
+      by typing in the above words. For example if the input is
 
       `> front`
 
-      it will display the first 10 articles from the front page of
+      it will display the first 5 articles from the front page of
       the site like so
 
       ```

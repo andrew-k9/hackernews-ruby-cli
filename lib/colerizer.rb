@@ -29,7 +29,11 @@ class Colerizer
     end
 
     def author_style(string)
-      Rainbow(string).italic
+      Rainbow(string).bold.italic
+    end
+
+    def comment_break_style(string)
+      Rainbow(string).bold
     end
 
   private
