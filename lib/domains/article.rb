@@ -27,8 +27,10 @@ class Article
 
   # returns all info on a single article
   def long_article_info
-    "#{@title} (#{domain(@external_link)})\n by #{@post_author} | points: #{
-      @points} | comments:#{@comment_count}\n Link: #{@external_link}"
+    external_link = Colerizer.link_style(@external_link)
+    author = Colerizer.author_style("by #{@post_author}")
+    "#{@title} (#{domain(@external_link)})\n #{author} | points: #{
+      @points} | comments: #{@comment_count}\n Link: #{external_link}"
   end
 
 private

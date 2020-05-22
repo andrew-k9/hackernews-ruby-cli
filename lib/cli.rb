@@ -11,7 +11,6 @@ class Cli
 
   # main loop for the program
   def call
-    # TODO: Add in more instructions about what each layer does
     IoManager.greeting
     input = format_input
     until input == "quit"
@@ -37,7 +36,7 @@ private
     if PAGES.include?(input)
       update_current_page("/#{input}")
       # for now, only 5 results
-      IoManager.print_array_data(@current_page.format_page_data(0, 5))
+      IoManager.print_article_array(@current_page.format_page_data(0, 5))
       @layer += 1
     else
       input = IoManager.global_input_layer(input, layer)
@@ -54,7 +53,8 @@ private
       index = input.split(" ").last.to_i - 1
       display_comments_of_post(index)
     elsif number?(input)
-      puts @current_page.format_article(input.to_i - 1)
+      IoManager
+        .print_single_article(@current_page.format_article(input.to_i - 1))
     else
       input = IoManager.global_input_layer(input, layer)
     end
@@ -69,7 +69,7 @@ private
       IoManager.invalid_number_error(post_index, @current_page.posts.length)
     else
       update_current_comments(post.comments_link)
-      IoManager.print_array_data(@current_comments.format_all)
+      IoManager.print_comment_array(@current_comments.format_all[0..10])
     end
   end
 

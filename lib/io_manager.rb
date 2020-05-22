@@ -1,3 +1,5 @@
+require "io/console"
+
 class IoManager
   class << self
     # works with Cli class to get input and change layers
@@ -36,12 +38,21 @@ class IoManager
       puts "`!`  - go to previous layer\n" + "`quit` - exit program"
     end
 
-    def print_array_data(array)
-      puts array
+    def print_article_array(array)
+      array.each do |element|
+        Colerizer.print_color_for_language_topic_framework(element)
+      end
+    end
+
+    def print_comment_array(array)
+      columns = IO.console.winsize[1] * 3 / 4
+      array.each do |comment|
+        puts format_string_for_window_size(comment, columns)
+      end
     end
 
     def print_single_article(article_string)
-      puts article_string
+      Colerizer.print_color_for_language_topic_framework(article_string)
     end
 
     # deals with input for all layers and bad input
@@ -76,6 +87,29 @@ class IoManager
 
     def invalid_number_error_string(number, bound)
       "number too high: #{number + 1} is there when #{bound} is max"
+    end
+
+  private
+
+    def format_string_for_window_size(
+      string, columns, formatted_string = "", sum = 0
+    )
+      string.split(/ /).each do |word|
+        if conditional?(sum, columns, word)
+          formatted_string += "\n#{word} "
+          # adding in an extra character `\n`
+          sum = word.length + 1
+        else
+          formatted_string += "#{word} "
+        end
+        # adding in a character every time regardless
+        sum += word.length + 1
+      end
+      formatted_string + Colerizer.comment_break_style(("-" * columns).to_s)
+    end
+
+    def conditional?(sum, columns, word)
+      sum >= columns || sum + word.length >= columns
     end
   end
 end
