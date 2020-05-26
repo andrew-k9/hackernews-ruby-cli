@@ -14,7 +14,7 @@ class Cli
   def call
     IoManager.greeting
     input = format_input
-    until input != "quit"
+    until input == "quit"
       input = @layer == 1 ? layer_one_input(input) : layer_two_input(input)
     end
     IoManager.goodbye
