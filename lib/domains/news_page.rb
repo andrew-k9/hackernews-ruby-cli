@@ -29,9 +29,9 @@ class NewsPage
 
   # a page is updateable if the route isn't news and it isn't the current page
   def updateable?(new_route)
-    bad_routes = %w[jobs comments]
+    good_routes = %w[newest front ask show]
     route = @page_link.split(".com").last
-    route == new_route && !bad_routes.include?(new_route)
+    route != new_route && good_routes.include?(new_route)
   end
 
   def valid_post?(index)
