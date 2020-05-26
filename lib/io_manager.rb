@@ -108,9 +108,12 @@ class IoManager
 
   private
 
-    # TODO: try with inject
-    def format_string_for_window_size(string, columns, formatted_string = "")
-      string.split(/ /).inject(0) do |sum, word|
+    # If I refactor with `inject`, rubocop complains about a useless assignemnt
+    # line that isn't useless
+    def format_string_for_window_size(
+      string, columns, formatted_string = "", sum = 0
+    )
+      string.split(/ /).each do |word|
         if conditional?(sum, columns, word)
           formatted_string += "\n#{word} "
           # adding in an extra character `\n`
@@ -118,7 +121,7 @@ class IoManager
         else
           formatted_string += "#{word} "
         end
-        # adding in a character every time regardless
+        # adding in a character every time, " "
         sum += word.length + 1
       end
       formatted_string + Colerizer.comment_break_style(("-" * columns).to_s)
