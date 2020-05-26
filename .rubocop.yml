@@ -32,6 +32,9 @@ Lint/ScriptPermission:
 Lint/StructNewOverride:
   Enabled: true
 
+Lint/DeprecatedOpenSSLConstant:
+  Enabled: false
+
 Metrics/BlockLength:
   Enabled: false
 
@@ -69,6 +72,9 @@ Style/HashTransformKeys:
   Enabled: false
 
 Style/HashTransformValues:
+  Enabled: false
+
+Style/WhileUntilModifier:
   Enabled: false
 
 Style/Lambda:

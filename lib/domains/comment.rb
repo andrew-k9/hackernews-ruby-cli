@@ -14,7 +14,7 @@ class Comment
   def format
     body = @body[0..COMMENT_MAX]
     author = Colerizer.author_style(@author)
-    "#{author} says:\n#{body}#{
-      '...' if @body.length > COMMENT_MAX}\n"
+    buffer = @body.length > COMMENT_MAX ? "..." : nil
+    "#{author} says:\n#{body}#{buffer}\n"
   end
 end

@@ -3,6 +3,7 @@ require "io/console"
 class IoManager
   class << self
     BREAKER = "------------------------------------------".freeze
+
     # works with Cli class to get input and change layers
     # @params- layer: Int
     def parse_layer_input(layer)
@@ -21,6 +22,10 @@ class IoManager
       puts "Running application, type `help` for help and `man` more info"
     end
 
+    def goodbye
+      puts "Thank you for running the program, goodbye!"
+    end
+
     # outputs the man page to console
     def man
       puts File.open("./db/man.txt").read
@@ -30,13 +35,13 @@ class IoManager
 
     # rubocop complained so I wrote this more... interestingly
     def help
-      puts "When in > (layer 1)\n" + "  `newest`  - go to new messages"
-      puts "  `front` - go to the front page\n" + "  `ask`   - got to ask page"
+      puts "When in > (layer 1)\n  `newest`  - go to new messages"
+      puts "  `front` - go to the front page\n  `ask`   - got to ask page"
       puts "  `show`  - go to the show section"
-      puts "When in >> (layer 2)\n" + "  `n`          - view info on post n"
+      puts "When in >> (layer 2)\n  `n`          - view info on post n"
       puts "  `comments n` - open the comments of the post"
-      puts "When in any layer\n" + "`help` - display this menu"
-      puts "`!`  - go to previous layer\n" + "`quit` - exit program"
+      puts "When in any layer\n`help` - display this menu"
+      puts "`!`  - go to previous layer\n`quit` - exit program"
       puts ""
     end
 
@@ -59,7 +64,6 @@ class IoManager
         puts format_string_for_window_size(comment, columns)
         puts ""
       end
-      puts BREAKER
     end
 
     def print_single_article(article_string)
@@ -104,6 +108,8 @@ class IoManager
 
   private
 
+    # If I refactor with `inject`, rubocop complains about a useless assignemnt
+    # line that isn't useless
     def format_string_for_window_size(
       string, columns, formatted_string = "", sum = 0
     )
@@ -115,7 +121,7 @@ class IoManager
         else
           formatted_string += "#{word} "
         end
-        # adding in a character every time regardless
+        # adding in a character every time, " "
         sum += word.length + 1
       end
       formatted_string + Colerizer.comment_break_style(("-" * columns).to_s)
